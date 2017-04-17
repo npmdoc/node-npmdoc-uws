@@ -1,4 +1,4 @@
-<div class="apidocDiv">
+<html><head></head><body><div class="apidocDiv">
 <style>
 /*csslint
 */
@@ -47,17 +47,10 @@
 }
 </style>
 <h1>api documentation for
-    <a
-
-        href="https://github.com/uWebSockets/uWebSockets"
-
-    >uws (v0.14.1)</a>
+    <a href="https://github.com/uWebSockets/uWebSockets">uws (v0.14.1)</a>
 </h1>
 <h4>Tiny WebSockets</h4>
-<div class="apidocSectionDiv"><a
-    href="#apidoc.tableOfContents"
-    id="apidoc.tableOfContents"
-><h1>table of contents</h1></a><ol>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.uws">module uws</a><ol>
 
@@ -837,18 +830,18 @@
 
     send(message, options, cb) {
         if (this.external) {
-            if (typeof options === &#x27;function&#x27;) {
+            if (typeof options === 'function') {
                 cb = options;
                 options = null;
             }
 
-            const binary = options &#x26;&#x26; options.binary || typeof message !== &#x27;string&#x27;;
+            const binary = options &amp;&amp; options.binary || typeof message !== 'string';
 
-            native.client.send(this.external, message, binary ? WebSocketClient.OPCODE_BINARY : WebSocketClient.OPCODE_TEXT, cb ? (() =&#x3e; {
+            native.client.send(this.external, message, binary ? WebSocketClient.OPCODE_BINARY : WebSocketClient.OPCODE_TEXT, cb ? (() =&gt; {
                 process.nextTick(cb);
             }) : undefined);
         } else if (cb) {
-            cb(new Error(&#x27;not opened&#x27;));
+            cb(new Error('not opened'));
         }
     }
 
@@ -876,11 +869,11 @@
         super();
 
         if (!options) {
-            throw new TypeError(&#x27;missing options&#x27;);
+            throw new TypeError('missing options');
         }
 
-        if (options.port === undefined &#x26;&#x26; !options.server &#x26;&#x26; !options.noServer) {
-            throw new TypeError(&#x27;invalid options&#x27;);
+        if (options.port === undefined &amp;&amp; !options.server &amp;&amp; !options.noServer) {
+            throw new TypeError('invalid options');
         }
 
         var nativeOptions = WebSocketClient.PERMESSAGE_DEFLATE;
@@ -902,17 +895,17 @@
         this._passedHttpServer = options.server;
 
         if (!options.noServer) {
-            this.httpServer = options.server ? options.server : http.createServer((request, response) =&#x3e; {
+            this.httpServer = options.server ? options.server : http.createServer((request, response) =&gt; {
                 // todo: default HTTP response
                 response.end();
             });
 
-            if (options.path &#x26;&#x26; (!options.path.length || options.path[0] !== &#x27;/&#x27;)) {
-                options.path = &#x27;/&#x27; + options.path;
+            if (options.path &amp;&amp; (!options.path.length || options.path[0] !== '/')) {
+                options.path = '/' + options.path;
             }
 
-            this.httpServer.on(&#x27;upgrade&#x27;, this._upgradeListener = ((request, socket, head) =&#x3e; {
-                if (!options.path || options.path == request.url.split(&#x27;?&#x27;)[0].split(&#x27;#&#x27;)[0]) {
+            this.httpServer.on('upgrade', this._upgradeListener = ((request, socket, head) =&gt; {
+                if (!options.path || options.path == request.url.split('?')[0].split('#')[0]) {
                     if (options.verifyClient) {
                         const info = {
                             origin: request.headers.origin,
@@ -921,7 +914,7 @@
                         };
 
                         if (options.verifyClient.length === 2) {
-                            options.verifyClient(info, (result, code, name) =&#x3e; {
+                            options.verifyClient(info, (result, code, name) =&gt; {
                                 if (result) {
                                     this.handleUpgrade(request, socket, head, emitConnection);
                                 } else {
@@ -932,7 +925,7 @@
                             if (options.verifyClient(info)) {
                                 this.handleUpgrade(request, socket, head, emitConnection);
                             } else {
-                                abortConnection(socket, 400, &#x27;Client verification failed&#x27;);
+                                abortConnection(socket, 400, 'Client verification failed');
                             }
                         }
                     } else {
@@ -940,22 +933,22 @@
                     }
                 } else {
                     if (this._lastUpgradeListener) {
-                        abortConnection(socket, 400, &#x27;URL not supported&#x27;);
+                        abortConnection(socket, 400, 'URL not supported');
                     }
                 }
             }));
 
-            this.httpServer.on(&#x27;newListener&#x27;, (eventName, listener) =&#x3e; {
-                if (eventName === &#x27;upgrade&#x27;) {
+            this.httpServer.on('newListener', (eventName, listener) =&gt; {
+                if (eventName === 'upgrade') {
                     this._lastUpgradeListener = false;
                 }
             });
         }
 
-        native.server.group.onDisconnection(this.serverGroup, (external, code, message, webSocket) =&#x3e; {
+        native.server.group.onDisconnection(this.serverGroup, (external, code, message, webSocket) =&gt; {
             webSocket.external = null;
 
-            process.nextTick(() =&#x3e; {
+            process.nextTick(() =&gt; {
                 webSocket.internalOnClose(code, message);
             });
 
@@ -964,15 +957,15 @@
 
         native.server.group.onMessage(this.serverGroup, onServerMessage);
 
-        native.server.group.onPing(this.serverGroup, (message, webSocket) =&#x3e; {
+        native.server.group.onPing(this.serverGroup, (message, webSocket) =&gt; {
             webSocket.onping(message);
         });
 
-        native.server.group.onPong(this.serverGroup, (message, webSocket) =&#x3e; {
+        native.server.group.onPong(this.serverGroup, (message, webSocket) =&gt; {
             webSocket.onpong(message);
         });
 
-        native.server.group.onConnection(this.serverGroup, (external) =&#x3e; {
+        native.server.group.onConnection(this.serverGroup, (external) =&gt; {
             const webSocket = new WebSocket(external); ...</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
@@ -1230,11 +1223,11 @@
         super();
 
         if (!options) {
-            throw new TypeError(&#x27;missing options&#x27;);
+            throw new TypeError('missing options');
         }
 
-        if (options.port === undefined &#x26;&#x26; !options.server &#x26;&#x26; !options.noServer) {
-            throw new TypeError(&#x27;invalid options&#x27;);
+        if (options.port === undefined &amp;&amp; !options.server &amp;&amp; !options.noServer) {
+            throw new TypeError('invalid options');
         }
 
         var nativeOptions = WebSocketClient.PERMESSAGE_DEFLATE;
@@ -1256,17 +1249,17 @@
         this._passedHttpServer = options.server;
 
         if (!options.noServer) {
-            this.httpServer = options.server ? options.server : http.createServer((request, response) =&#x3e; {
+            this.httpServer = options.server ? options.server : http.createServer((request, response) =&gt; {
                 // todo: default HTTP response
                 response.end();
             });
 
-            if (options.path &#x26;&#x26; (!options.path.length || options.path[0] !== &#x27;/&#x27;)) {
-                options.path = &#x27;/&#x27; + options.path;
+            if (options.path &amp;&amp; (!options.path.length || options.path[0] !== '/')) {
+                options.path = '/' + options.path;
             }
 
-            this.httpServer.on(&#x27;upgrade&#x27;, this._upgradeListener = ((request, socket, head) =&#x3e; {
-                if (!options.path || options.path == request.url.split(&#x27;?&#x27;)[0].split(&#x27;#&#x27;)[0]) {
+            this.httpServer.on('upgrade', this._upgradeListener = ((request, socket, head) =&gt; {
+                if (!options.path || options.path == request.url.split('?')[0].split('#')[0]) {
                     if (options.verifyClient) {
                         const info = {
                             origin: request.headers.origin,
@@ -1275,7 +1268,7 @@
                         };
 
                         if (options.verifyClient.length === 2) {
-                            options.verifyClient(info, (result, code, name) =&#x3e; {
+                            options.verifyClient(info, (result, code, name) =&gt; {
                                 if (result) {
                                     this.handleUpgrade(request, socket, head, emitConnection);
                                 } else {
@@ -1286,7 +1279,7 @@
                             if (options.verifyClient(info)) {
                                 this.handleUpgrade(request, socket, head, emitConnection);
                             } else {
-                                abortConnection(socket, 400, &#x27;Client verification failed&#x27;);
+                                abortConnection(socket, 400, 'Client verification failed');
                             }
                         }
                     } else {
@@ -1294,22 +1287,22 @@
                     }
                 } else {
                     if (this._lastUpgradeListener) {
-                        abortConnection(socket, 400, &#x27;URL not supported&#x27;);
+                        abortConnection(socket, 400, 'URL not supported');
                     }
                 }
             }));
 
-            this.httpServer.on(&#x27;newListener&#x27;, (eventName, listener) =&#x3e; {
-                if (eventName === &#x27;upgrade&#x27;) {
+            this.httpServer.on('newListener', (eventName, listener) =&gt; {
+                if (eventName === 'upgrade') {
                     this._lastUpgradeListener = false;
                 }
             });
         }
 
-        native.server.group.onDisconnection(this.serverGroup, (external, code, message, webSocket) =&#x3e; {
+        native.server.group.onDisconnection(this.serverGroup, (external, code, message, webSocket) =&gt; {
             webSocket.external = null;
 
-            process.nextTick(() =&#x3e; {
+            process.nextTick(() =&gt; {
                 webSocket.internalOnClose(code, message);
             });
 
@@ -1318,15 +1311,15 @@
 
         native.server.group.onMessage(this.serverGroup, onServerMessage);
 
-        native.server.group.onPing(this.serverGroup, (message, webSocket) =&#x3e; {
+        native.server.group.onPing(this.serverGroup, (message, webSocket) =&gt; {
             webSocket.onping(message);
         });
 
-        native.server.group.onPong(this.serverGroup, (message, webSocket) =&#x3e; {
+        native.server.group.onPong(this.serverGroup, (message, webSocket) =&gt; {
             webSocket.onpong(message);
         });
 
-        native.server.group.onConnection(this.serverGroup, (external) =&#x3e; {
+        native.server.group.onConnection(this.serverGroup, (external) =&gt; {
             const webSocket = new WebSocket(external); ...</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
@@ -1368,13 +1361,13 @@
 
         if (!options.noServer) {
 this.httpServer = options.server ? options.server : http.<span class="apidocCodeKeywordSpan">createServer</span>((request, response
-) =&#x3e; {
+) =&gt; {
     // todo: default HTTP response
     response.end();
 });
 
-if (options.path &#x26;&#x26; (!options.path.length || options.path[0] !== &#x27;/&#x27;)) {
-    options.path = &#x27;/&#x27; + options.path;
+if (options.path &amp;&amp; (!options.path.length || options.path[0] !== '/')) {
+    options.path = '/' + options.path;
 }
 ...</pre></li>
     </ul>
@@ -1442,13 +1435,13 @@ if (options.path &#x26;&#x26; (!options.path.length || options.path[0] !== &#x27
 
         if (!options.noServer) {
 this.httpServer = options.server ? options.server : http.<span class="apidocCodeKeywordSpan">createServer</span>((request, response
-) =&#x3e; {
+) =&gt; {
     // todo: default HTTP response
     response.end();
 });
 
-if (options.path &#x26;&#x26; (!options.path.length || options.path[0] !== &#x27;/&#x27;)) {
-    options.path = &#x27;/&#x27; + options.path;
+if (options.path &amp;&amp; (!options.path.length || options.path[0] !== '/')) {
+    options.path = '/' + options.path;
 }
 ...</pre></li>
     </ul>
@@ -1530,14 +1523,14 @@ if (options.path &#x26;&#x26; (!options.path.length || options.path[0] !== &#x27
 
 if (options.port !== undefined) {
     if (options.host) {
-        this.httpServer.<span class="apidocCodeKeywordSpan">listen</span>(options.port, options.host, () =&#x3e; {
-            this.emit(&#x27;listening&#x27;);
-            callback &#x26;&#x26; callback();
+        this.httpServer.<span class="apidocCodeKeywordSpan">listen</span>(options.port, options.host, () =&gt; {
+            this.emit('listening');
+            callback &amp;&amp; callback();
         });
     } else {
-        this.httpServer.listen(options.port, () =&#x3e; {
-            this.emit(&#x27;listening&#x27;);
-            callback &#x26;&#x26; callback();
+        this.httpServer.listen(options.port, () =&gt; {
+            this.emit('listening');
+            callback &amp;&amp; callback();
 ...</pre></li>
     </ul>
 
@@ -1552,16 +1545,16 @@ if (options.port !== undefined) {
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function on() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-var WebSocketServer = require(&#x27;uws&#x27;).Server;
+var WebSocketServer = require('uws').Server;
 var wss = new WebSocketServer({ port: 3000 });
 
 function onMessage(message) {
-    console.log(&#x27;received: &#x27; + message);
+    console.log('received: ' + message);
 }
 
-wss.<span class="apidocCodeKeywordSpan">on</span>(&#x27;connection&#x27;, function(ws) {
-    ws.on(&#x27;message&#x27;, onMessage);
-    ws.send(&#x27;something&#x27;);
+wss.<span class="apidocCodeKeywordSpan">on</span>('connection', function(ws) {
+    ws.on('message', onMessage);
+    ws.send('something');
 });
 ```
 
@@ -1594,14 +1587,14 @@ There are some important incompatibilities with `ws` though, we aim to be ~90% c
 
 if (options.port !== undefined) {
     if (options.host) {
-        this.httpServer.<span class="apidocCodeKeywordSpan">listen</span>(options.port, options.host, () =&#x3e; {
-            this.emit(&#x27;listening&#x27;);
-            callback &#x26;&#x26; callback();
+        this.httpServer.<span class="apidocCodeKeywordSpan">listen</span>(options.port, options.host, () =&gt; {
+            this.emit('listening');
+            callback &amp;&amp; callback();
         });
     } else {
-        this.httpServer.listen(options.port, () =&#x3e; {
-            this.emit(&#x27;listening&#x27;);
-            callback &#x26;&#x26; callback();
+        this.httpServer.listen(options.port, () =&gt; {
+            this.emit('listening');
+            callback &amp;&amp; callback();
 ...</pre></li>
     </ul>
 
@@ -1621,16 +1614,16 @@ if (options.port !== undefined) {
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function on() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-var WebSocketServer = require(&#x27;uws&#x27;).Server;
+var WebSocketServer = require('uws').Server;
 var wss = new WebSocketServer({ port: 3000 });
 
 function onMessage(message) {
-    console.log(&#x27;received: &#x27; + message);
+    console.log('received: ' + message);
 }
 
-wss.<span class="apidocCodeKeywordSpan">on</span>(&#x27;connection&#x27;, function(ws) {
-    ws.on(&#x27;message&#x27;, onMessage);
-    ws.send(&#x27;something&#x27;);
+wss.<span class="apidocCodeKeywordSpan">on</span>('connection', function(ws) {
+    ws.on('message', onMessage);
+    ws.send('something');
 });
 ```
 
@@ -1656,21 +1649,21 @@ There are some important incompatibilities with `ws` though, we aim to be ~90% c
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function clearUserData() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-native.client.group.onDisconnection(clientGroup, (external, code, message, webSocket) =&#x3e; {
+native.client.group.onDisconnection(clientGroup, (external, code, message, webSocket) =&gt; {
     webSocket.external = null;
 
-    process.nextTick(() =&#x3e; {
+    process.nextTick(() =&gt; {
         webSocket.internalOnClose(code, message);
     });
 
     native.<span class="apidocCodeKeywordSpan">clearUserData</span>(external);
 });
 
-native.client.group.onPing(clientGroup, (message, webSocket) =&#x3e; {
+native.client.group.onPing(clientGroup, (message, webSocket) =&gt; {
     webSocket.onping(message);
 });
 
-native.client.group.onPong(clientGroup, (message, webSocket) =&#x3e; {
+native.client.group.onPong(clientGroup, (message, webSocket) =&gt; {
 ...</pre></li>
     </ul>
 
@@ -1748,13 +1741,13 @@ var _upgradeReq = null;
 
 const clientGroup = native.client.group.create();
 
-native.client.group.onConnection(clientGroup, (external) =&#x3e; {
+native.client.group.onConnection(clientGroup, (external) =&gt; {
     const webSocket = native.<span class="apidocCodeKeywordSpan">getUserData</span>(external);
     webSocket.external = external;
     webSocket.internalOnOpen();
 });
 
-native.client.group.onMessage(clientGroup, (message, webSocket) =&#x3e; {
+native.client.group.onMessage(clientGroup, (message, webSocket) =&gt; {
     webSocket.internalOnMessage(message);
 });
 ...</pre></li>
@@ -1785,8 +1778,8 @@ native.client.group.onMessage(clientGroup, (message, webSocket) =&#x3e; {
     <li>description and source-code<pre class="apidocCodePre">function setNoop() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
     } else {
-        throw new Error(&#x27;Compilation of µWebSockets has failed and there is no pre-compiled binary &#x27; +
-        &#x27;available for your system. Please install a supported C++11 compiler and reinstall the module \&#x27;uws\&#x27;.&#
+        throw new Error('Compilation of ÂµWebSockets has failed and there is no pre-compiled binary ' +
+        'available for your system. Please install a supported C++11 compiler and reinstall the module \'uws\'.&amp;#
 x27;);
     }
 }
@@ -1798,7 +1791,7 @@ var _upgradeReq = null;
 
 const clientGroup = native.client.group.create();
 
-native.client.group.onConnection(clientGroup, (external) =&#x3e; {
+native.client.group.onConnection(clientGroup, (external) =&gt; {
 const webSocket = native.getUserData(external);
 ...</pre></li>
     </ul>
@@ -1814,11 +1807,11 @@ const webSocket = native.getUserData(external);
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function setUserData() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-native.server.group.onPong(this.serverGroup, (message, webSocket) =&#x3e; {
+native.server.group.onPong(this.serverGroup, (message, webSocket) =&gt; {
     webSocket.onpong(message);
 });
 
-native.server.group.onConnection(this.serverGroup, (external) =&#x3e; {
+native.server.group.onConnection(this.serverGroup, (external) =&gt; {
     const webSocket = new WebSocket(external);
 
     native.<span class="apidocCodeKeywordSpan">setUserData</span>(external, webSocket);
@@ -1828,7 +1821,7 @@ native.server.group.onConnection(this.serverGroup, (external) =&#x3e; {
 
 if (options.port !== undefined) {
     if (options.host) {
-        this.httpServer.listen(options.port, options.host, () =&#x3e; {
+        this.httpServer.listen(options.port, options.host, () =&gt; {
 ...</pre></li>
     </ul>
 
@@ -1845,19 +1838,19 @@ if (options.port !== undefined) {
     <li>example usage<pre class="apidocCodePre">...
     }
 } else {
-    const secKey = request.headers[&#x27;sec-websocket-key&#x27;];
+    const secKey = request.headers['sec-websocket-key'];
     const socketHandle = socket.ssl ? socket._parent._handle : socket._handle;
     const sslState = socket.ssl ? socket.ssl._external : null;
-    if (socketHandle &#x26;&#x26; secKey &#x26;&#x26; secKey.length == 24) {
+    if (socketHandle &amp;&amp; secKey &amp;&amp; secKey.length == 24) {
         socket.setNoDelay(this._noDelay);
         const ticket = native.<span class="apidocCodeKeywordSpan">transfer</span>(socketHandle.fd === -1 ? socketHandle : socketHandle
 .fd, sslState);
-        socket.on(&#x27;close&#x27;, (error) =&#x3e; {
+        socket.on('close', (error) =&gt; {
             if (this.serverGroup) {
                 _upgradeReq = request;
                 this._upgradeCallback = callback ? callback : noop;
-                native.upgrade(this.serverGroup, ticket, secKey, request.headers[&#x27;sec-websocket-extensions&#x27;], request.
-headers[&#x27;sec-websocket-protocol&#x27;]);
+                native.upgrade(this.serverGroup, ticket, secKey, request.headers['sec-websocket-extensions'], request.
+headers['sec-websocket-protocol']);
             }
         });
 ...</pre></li>
@@ -1882,13 +1875,13 @@ handleUpgrade(request, socket, upgradeHead, callback) {
             _upgradeReq = request;
             this._upgradeCallback = callback ? callback : noop;
             native.<span class="apidocCodeKeywordSpan">upgrade</span>(this.serverGroup, socket.external, secKey, request.headers
-[&#x27;sec-websocket-extensions&#x27;], request.headers[&#x27;sec-websocket-protocol&#x27;]);
+['sec-websocket-extensions'], request.headers['sec-websocket-protocol']);
         }
     } else {
-        const secKey = request.headers[&#x27;sec-websocket-key&#x27;];
+        const secKey = request.headers['sec-websocket-key'];
         const socketHandle = socket.ssl ? socket._parent._handle : socket._handle;
         const sslState = socket.ssl ? socket.ssl._external : null;
-        if (socketHandle &#x26;&#x26; secKey &#x26;&#x26; secKey.length == 24) {
+        if (socketHandle &amp;&amp; secKey &amp;&amp; secKey.length == 24) {
             socket.setNoDelay(this._noDelay);
 ...</pre></li>
     </ul>
@@ -1913,21 +1906,21 @@ handleUpgrade(request, socket, upgradeHead, callback) {
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function clearUserData() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-native.client.group.onDisconnection(clientGroup, (external, code, message, webSocket) =&#x3e; {
+native.client.group.onDisconnection(clientGroup, (external, code, message, webSocket) =&gt; {
     webSocket.external = null;
 
-    process.nextTick(() =&#x3e; {
+    process.nextTick(() =&gt; {
         webSocket.internalOnClose(code, message);
     });
 
     native.<span class="apidocCodeKeywordSpan">clearUserData</span>(external);
 });
 
-native.client.group.onPing(clientGroup, (message, webSocket) =&#x3e; {
+native.client.group.onPing(clientGroup, (message, webSocket) =&gt; {
     webSocket.onping(message);
 });
 
-native.client.group.onPong(clientGroup, (message, webSocket) =&#x3e; {
+native.client.group.onPong(clientGroup, (message, webSocket) =&gt; {
 ...</pre></li>
     </ul>
 
@@ -1948,7 +1941,7 @@ native.client.group.onPong(clientGroup, (message, webSocket) =&#x3e; {
     <li>description and source-code<pre class="apidocCodePre">function close() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
     } else if (cb) {
-        cb(new Error(&#x27;not opened&#x27;));
+        cb(new Error('not opened'));
     }
 }
 
@@ -2004,12 +1997,12 @@ constructor(uri) {
     <li>example usage<pre class="apidocCodePre">...
 
 function onMessage(message) {
-    console.log(&#x27;received: &#x27; + message);
+    console.log('received: ' + message);
 }
 
-wss.on(&#x27;connection&#x27;, function(ws) {
-    ws.on(&#x27;message&#x27;, onMessage);
-    ws.<span class="apidocCodeKeywordSpan">send</span>(&#x27;something&#x27;);
+wss.on('connection', function(ws) {
+    ws.on('message', onMessage);
+    ws.<span class="apidocCodeKeywordSpan">send</span>('something');
 });
 ```
 
@@ -2060,7 +2053,7 @@ terminate() {
 
 send(message, options, cb) {
     if (this.external) {
-        if (typeof options === &#x27;function&#x27;) {
+        if (typeof options === 'function') {
 ...</pre></li>
     </ul>
 
@@ -2155,13 +2148,13 @@ var _upgradeReq = null;
 
 const clientGroup = native.client.group.create();
 
-native.client.group.onConnection(clientGroup, (external) =&#x3e; {
+native.client.group.onConnection(clientGroup, (external) =&gt; {
     const webSocket = native.<span class="apidocCodeKeywordSpan">getUserData</span>(external);
     webSocket.external = external;
     webSocket.internalOnOpen();
 });
 
-native.client.group.onMessage(clientGroup, (message, webSocket) =&#x3e; {
+native.client.group.onMessage(clientGroup, (message, webSocket) =&gt; {
     webSocket.internalOnMessage(message);
 });
 ...</pre></li>
@@ -2184,7 +2177,7 @@ native.client.group.onMessage(clientGroup, (message, webSocket) =&#x3e; {
     <li>description and source-code<pre class="apidocCodePre">function close() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
     } else if (cb) {
-        cb(new Error(&#x27;not opened&#x27;));
+        cb(new Error('not opened'));
     }
 }
 
@@ -2240,12 +2233,12 @@ constructor(uri) {
     <li>example usage<pre class="apidocCodePre">...
 
 function onMessage(message) {
-    console.log(&#x27;received: &#x27; + message);
+    console.log('received: ' + message);
 }
 
-wss.on(&#x27;connection&#x27;, function(ws) {
-    ws.on(&#x27;message&#x27;, onMessage);
-    ws.<span class="apidocCodeKeywordSpan">send</span>(&#x27;something&#x27;);
+wss.on('connection', function(ws) {
+    ws.on('message', onMessage);
+    ws.<span class="apidocCodeKeywordSpan">send</span>('something');
 });
 ```
 
@@ -2296,7 +2289,7 @@ terminate() {
 
 send(message, options, cb) {
     if (this.external) {
-        if (typeof options === &#x27;function&#x27;) {
+        if (typeof options === 'function') {
 ...</pre></li>
     </ul>
 
@@ -2319,8 +2312,8 @@ send(message, options, cb) {
     <li>description and source-code<pre class="apidocCodePre">function setNoop() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
     } else {
-        throw new Error(&#x27;Compilation of µWebSockets has failed and there is no pre-compiled binary &#x27; +
-        &#x27;available for your system. Please install a supported C++11 compiler and reinstall the module \&#x27;uws\&#x27;.&#
+        throw new Error('Compilation of ÂµWebSockets has failed and there is no pre-compiled binary ' +
+        'available for your system. Please install a supported C++11 compiler and reinstall the module \'uws\'.&amp;#
 x27;);
     }
 }
@@ -2332,7 +2325,7 @@ var _upgradeReq = null;
 
 const clientGroup = native.client.group.create();
 
-native.client.group.onConnection(clientGroup, (external) =&#x3e; {
+native.client.group.onConnection(clientGroup, (external) =&gt; {
 const webSocket = native.getUserData(external);
 ...</pre></li>
     </ul>
@@ -2353,11 +2346,11 @@ const webSocket = native.getUserData(external);
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function setUserData() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-native.server.group.onPong(this.serverGroup, (message, webSocket) =&#x3e; {
+native.server.group.onPong(this.serverGroup, (message, webSocket) =&gt; {
     webSocket.onpong(message);
 });
 
-native.server.group.onConnection(this.serverGroup, (external) =&#x3e; {
+native.server.group.onConnection(this.serverGroup, (external) =&gt; {
     const webSocket = new WebSocket(external);
 
     native.<span class="apidocCodeKeywordSpan">setUserData</span>(external, webSocket);
@@ -2367,7 +2360,7 @@ native.server.group.onConnection(this.serverGroup, (external) =&#x3e; {
 
 if (options.port !== undefined) {
     if (options.host) {
-        this.httpServer.listen(options.port, options.host, () =&#x3e; {
+        this.httpServer.listen(options.port, options.host, () =&gt; {
 ...</pre></li>
     </ul>
 
@@ -2389,19 +2382,19 @@ if (options.port !== undefined) {
     <li>example usage<pre class="apidocCodePre">...
     }
 } else {
-    const secKey = request.headers[&#x27;sec-websocket-key&#x27;];
+    const secKey = request.headers['sec-websocket-key'];
     const socketHandle = socket.ssl ? socket._parent._handle : socket._handle;
     const sslState = socket.ssl ? socket.ssl._external : null;
-    if (socketHandle &#x26;&#x26; secKey &#x26;&#x26; secKey.length == 24) {
+    if (socketHandle &amp;&amp; secKey &amp;&amp; secKey.length == 24) {
         socket.setNoDelay(this._noDelay);
         const ticket = native.<span class="apidocCodeKeywordSpan">transfer</span>(socketHandle.fd === -1 ? socketHandle : socketHandle
 .fd, sslState);
-        socket.on(&#x27;close&#x27;, (error) =&#x3e; {
+        socket.on('close', (error) =&gt; {
             if (this.serverGroup) {
                 _upgradeReq = request;
                 this._upgradeCallback = callback ? callback : noop;
-                native.upgrade(this.serverGroup, ticket, secKey, request.headers[&#x27;sec-websocket-extensions&#x27;], request.
-headers[&#x27;sec-websocket-protocol&#x27;]);
+                native.upgrade(this.serverGroup, ticket, secKey, request.headers['sec-websocket-extensions'], request.
+headers['sec-websocket-protocol']);
             }
         });
 ...</pre></li>
@@ -2431,13 +2424,13 @@ handleUpgrade(request, socket, upgradeHead, callback) {
             _upgradeReq = request;
             this._upgradeCallback = callback ? callback : noop;
             native.<span class="apidocCodeKeywordSpan">upgrade</span>(this.serverGroup, socket.external, secKey, request.headers
-[&#x27;sec-websocket-extensions&#x27;], request.headers[&#x27;sec-websocket-protocol&#x27;]);
+['sec-websocket-extensions'], request.headers['sec-websocket-protocol']);
         }
     } else {
-        const secKey = request.headers[&#x27;sec-websocket-key&#x27;];
+        const secKey = request.headers['sec-websocket-key'];
         const socketHandle = socket.ssl ? socket._parent._handle : socket._handle;
         const sslState = socket.ssl ? socket.ssl._external : null;
-        if (socketHandle &#x26;&#x26; secKey &#x26;&#x26; secKey.length == 24) {
+        if (socketHandle &amp;&amp; secKey &amp;&amp; secKey.length == 24) {
             socket.setNoDelay(this._noDelay);
 ...</pre></li>
     </ul>
@@ -2469,3 +2462,4 @@ handleUpgrade(request, socket, upgradeHead, callback) {
     ]
 </div>
 </div>
+</body></html>
